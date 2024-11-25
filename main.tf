@@ -66,6 +66,15 @@ resource "harvester_virtualmachine" "hostvm" {
     auto_delete = true
   }
 
+  tags = {
+    condenser_ingress_isEnabled = true
+    condenser_ingress_isAllowed = true
+    condenser_ingress_hadoop_hostname = "${var.username}-hadoop"
+    condenser_ingress_hadoop_port = 9870
+    condenser_ingress_yarn_hostname = "${var.username}-yarn"
+    condenser_ingress_yarn_port = 8088
+  }
+  
   cloudinit {
     user_data_secret_name = harvester_cloudinit_secret.cloud-config.name
   }
@@ -168,4 +177,5 @@ resource "harvester_virtualmachine" "storagevm" {
   cloudinit {
     user_data_secret_name = harvester_cloudinit_secret.cloud-config.name
   }
+
 }

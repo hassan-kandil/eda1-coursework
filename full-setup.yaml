@@ -3,5 +3,9 @@
 - import_playbook: setup.yaml
 - import_playbook: hostnamehostnode.yaml
 - import_playbook: hostnameworkers.yaml
+- import_playbook: sshkey.yaml
+- import_playbook: sharesshkey.yaml
 - import_playbook: install-hadoop.yaml
-
+- import_playbook: hadoop-host.yaml
+- import_playbook: hadoop-worker.yaml
+- import_playbook: hadoop-final.yaml

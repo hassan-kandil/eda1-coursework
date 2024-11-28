@@ -1,0 +1,13 @@
+- name: Configure namenode and start hadoop
+  hosts: hostnode
+  tasks: 
+  - name: generate worker file
+    ansible.builtin.template:
+      src: files/workers.j2
+      dest: hadoop-3.4.0/etc/hadoop/workers
+  - name: format cluster
+    ansible.builtin.shell: hdfs namenode -format
+  - name: start dfs
+    ansible.builtin.shell: nohup /home/almalinux/hadoop-3.4.0/sbin/start-dfs.sh
+  - name: start yarn
+    ansible.builtin.shell: nohup /home/almalinux/hadoop-3.4.0/sbin/start-yarn.sh

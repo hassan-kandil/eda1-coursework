@@ -57,7 +57,7 @@
         </property>
         <property>
             <name>dfs.namenode.http-address</name>
-            <value>hostnode:50070</value>
+            <value>hostnode:9870</value>
         </property>
         <property>
             <name>dfs.replication</name>

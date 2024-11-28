@@ -1,0 +1,7 @@
+- name: Install and configure hadoop
+  hosts: hostnode
+  tasks: 
+  - name: create namenode
+    ansible.builtin.file:
+      path: /opt/hadoop_tmp/hdfs/namenode
+      state: directory

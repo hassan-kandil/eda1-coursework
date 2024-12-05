@@ -6,5 +6,6 @@ numpy<2.0
 rotary_embedding_torch
 scipy
 setuptools
-torch==2.0.1
 faiss-cpu
+https://download.pytorch.org/whl/cpu/torch-2.0.1%2Bcpu-cp39-cp39-linux_x86_64.whl#sha256=73482a223d577407c45685fde9d2a74ba42f0d8d9f6e1e95c08071dc55c47d7b
+

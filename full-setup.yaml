@@ -9,5 +9,6 @@
 - import_playbook: hadoop-host.yaml
 - import_playbook: hadoop-worker.yaml
 - import_playbook: hadoop-final.yaml
+- import_playbook: install-spark.yaml
 - import_playbook: spark-master.yaml
 - import_playbook: spark-worker.yaml

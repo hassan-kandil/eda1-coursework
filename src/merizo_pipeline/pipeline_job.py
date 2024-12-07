@@ -17,7 +17,7 @@ def delete_local_file(file_path):
 
 
 def upload_file_to_hdfs(local_file_path, hdfs_file_path):
-    hdfs_put_cmd = ['hdfs', 'dfs', '-put', local_file_path, hdfs_file_path]
+    hdfs_put_cmd = ['/home/almalinux/hadoop-3.4.0/bin/hdfs', 'dfs', '-put', local_file_path, hdfs_file_path]
     print(f'STEP 3: UPLOADING ANALYSIS OUTPUT TO HDFS: {" ".join(hdfs_put_cmd)}')
     p = Popen(hdfs_put_cmd, stdin=PIPE,stdout=PIPE, stderr=PIPE)
     out, err = p.communicate()
@@ -44,7 +44,7 @@ def run_parser(input_file):
     """
     search_file = input_file+"_search.tsv"
     print("search_file: ", search_file)
-    cmd = ['python3', './results_parser.py', search_file]
+    cmd = ['python3', '/home/almalinux/eda1-coursework/src/merizo_pipeline/results_parser.py', search_file]
     print(f'STEP 2: RUNNING PARSER: {" ".join(cmd)}')
     p = Popen(cmd, stdin=PIPE,stdout=PIPE, stderr=PIPE)
     out, err = p.communicate()
@@ -58,7 +58,11 @@ def run_parser(input_file):
 
 def run_merizo_search(file_name, file_content):
     print(f"File Name: {file_name}")
-    # Create a temporary file to hold the content
+    # Setting matplotlib config env var to a writable tmp directory 
+    # since it's a merizo search dependency
+    os.environ['MPLCONFIGDIR'] = '/tmp/matplotlib_config'
+    # Create a temporary file to hold the pdb content 
+    # since merizo search requires the input to be a physical file
     with NamedTemporaryFile(delete=True, mode='wb') as temp_file:
         temp_file.write(file_content)
         temp_file_path = temp_file.name
@@ -74,8 +78,8 @@ def run_merizo_search(file_name, file_content):
            '-d',
            'cpu',
            '--threads',
-           '1'
-          ]
+           '2'
+        ]
         print(f'STEP 1: RUNNING MERIZO: {" ".join(cmd)}')
         p = Popen(cmd, stdin=PIPE,stdout=PIPE, stderr=PIPE)
         out, err = p.communicate()
@@ -99,12 +103,14 @@ def pipeline(file_tuple):
 
 
 if __name__ == "__main__":
-    spark = SparkSession.builder.appName("MerizoSearch").getOrCreate()
+    spark = SparkSession.builder \
+        .appName("MerizoPipeline") \
+        .getOrCreate()
     sc = spark.sparkContext
 
     input_dir = "/UP000000625_83333_ECOLI_v4/"
     file_rdd = sc.binaryFiles(input_dir + "*.pdb")
-    # file_rdd = file_rdd.sample(withReplacement=False, fraction=0.005)
+    # file_rdd = file_rdd.sample(withReplacement=False, fraction=0.001)
     file_content_rdd = file_rdd.map(lambda x: (os.path.basename(x[0]), x[1]))
 
     file_content_rdd.map(pipeline).collect()

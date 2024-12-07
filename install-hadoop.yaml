@@ -86,6 +86,10 @@
             <name>yarn.log-aggregation-enable</name>
             <value>true</value>
         </property>
+        <property>
+            <name>yarn.nodemanager.resource.cpu-vcores</name>
+            <value>4</value>
+        </property>
       state: present
   - name: config mapred-site.xml
     ansible.builtin.blockinfile:

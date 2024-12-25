@@ -39,3 +39,7 @@ terraform.rc
 
 # Ignore data files
 *.pdb*
+
+**/.ipynb_checkpoints/*
+
+*.bin

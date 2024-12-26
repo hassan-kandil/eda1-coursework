@@ -10,7 +10,12 @@
       dest: /home/almalinux/
       remote_src: true
       src: /home/almalinux/spark.tgz
+      creates: /home/almalinux/spark-3.5.3-bin-hadoop3-scala2.13
+  - name: Remove spark tar file
+    ansible.builtin.file:
+      path: /home/almalinux/spark.tgz
+      state: absent
   - name: Write config file
     ansible.builtin.template:
       src: files/spark-defaults.conf.j2
-      dest:  /home/almalinux/spark-3.5.3-bin-hadoop3-scala2.13/conf/spark-defaults.conf
+      dest: /home/almalinux/spark-3.5.3-bin-hadoop3-scala2.13/conf/spark-defaults.conf

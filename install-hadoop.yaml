@@ -10,6 +10,11 @@
       dest: /home/almalinux/
       remote_src: true
       src: /home/almalinux/hadoop.tar.gz
+      creates: /home/almalinux/hadoop-3.4.0
+  - name: Remove hadoop tar file
+    ansible.builtin.file:
+      path: /home/almalinux/hadoop.tar.gz
+      state: absent
   - name: Set hadoop environment
     ansible.builtin.blockinfile:
       path: /home/almalinux/.bashrc
@@ -91,8 +96,8 @@
             <value>4</value>
         </property>
         <property>
-            <name> yarn.nodemanager.resource.memory-mb</name>
-            <value>72000</value>
+            <name>yarn.nodemanager.resource.memory-mb</name>
+            <value>28672</value>
         </property>
       state: present
   - name: config mapred-site.xml

@@ -21,7 +21,7 @@ resource "harvester_cloudinit_secret" "cloud-config" {
   name      = "cloud-config-${random_id.secret.hex}"
   namespace = var.namespace
 
-  user_data = templatefile("cloud-init.tmpl.yml", {
+  user_data = templatefile("templates/cloud-init.tmpl.yml", {
       public_key_openssh = data.harvester_ssh_key.mysshkey.public_key
       lecturer_public_key = data.harvester_ssh_key.lecturersshkey.public_key
     })

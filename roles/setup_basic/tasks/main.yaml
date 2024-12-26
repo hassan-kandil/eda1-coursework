@@ -1,0 +1,5 @@
+- include_tasks: update.yaml
+- include_tasks: local.yaml
+- include_tasks: reboot.yaml
+- include_tasks: tools.yaml
+- include_tasks: hosts.yaml

@@ -1,5 +1,4 @@
 - import_playbook: setup_basic.yaml
-- import_playbook: sshkey.yaml
-- import_playbook: sharesshkey.yaml
+- import_playbook: setup_ssh.yaml
 - import_playbook: setup_hadoop.yaml
 - import_playbook: setup_spark.yaml

@@ -1,0 +1,9 @@
+- name: Generate shared SSH keys
+  hosts: hostnode
+  roles:
+    - generate_ssh_key
+
+- name: Share SSH keys
+  hosts: hostnode:workers
+  roles:
+    - share_ssh_key

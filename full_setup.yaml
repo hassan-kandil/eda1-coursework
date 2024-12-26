@@ -1,6 +1,4 @@
 - import_playbook: setup_basic.yaml
-- import_playbook: hostnamehostnode.yaml
-- import_playbook: hostnameworkers.yaml
 - import_playbook: sshkey.yaml
 - import_playbook: sharesshkey.yaml
 - import_playbook: setup_hadoop.yaml

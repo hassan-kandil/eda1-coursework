@@ -1,7 +1,0 @@
-- name: Restart spark workers
-  hosts: workers
-  tasks: 
-  - name: Restart spark workers
-    ansible.builtin.shell: | 
-      spark-3.5.3-bin-hadoop3-scala2.13/sbin/stop-worker.sh 
-      spark-3.5.3-bin-hadoop3-scala2.13/sbin/start-worker.sh hostnode:7077

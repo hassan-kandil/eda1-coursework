@@ -1,7 +1,0 @@
-- name: Restart spark master
-  hosts: hostnode
-  tasks: 
-  - name: Restart spark master
-    ansible.builtin.shell: |
-      spark-3.5.3-bin-hadoop3-scala2.13/sbin/stop-master.sh 
-      spark-3.5.3-bin-hadoop3-scala2.13/sbin/start-master.sh 

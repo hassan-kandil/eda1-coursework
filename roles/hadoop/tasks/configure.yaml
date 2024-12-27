@@ -4,12 +4,14 @@
     owner: almalinux
     group: almalinux
     state: directory
+  become: yes
 - name: Add hdfs directory
   ansible.builtin.file:
     path: /opt/hadoop_tmp/hdfs
     owner: almalinux
     group: almalinux
     state: directory
+  become: yes
 - name: config core-site.xml
   ansible.builtin.blockinfile:
     path: /home/almalinux/hadoop-3.4.0/etc/hadoop/core-site.xml

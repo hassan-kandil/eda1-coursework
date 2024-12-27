@@ -45,3 +45,6 @@ terraform.rc
 *.bin
 .generated/
 .sparkpass
+
+*.egg*
+**/build/*

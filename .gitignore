@@ -43,3 +43,5 @@ terraform.rc
 **/.ipynb_checkpoints/*
 
 *.bin
+.generated/
+.sparkpass

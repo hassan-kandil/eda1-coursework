@@ -1,0 +1,49 @@
+- name: Create empty data directory
+  file:
+    path: /home/almalinux/data
+    state: directory
+- name: Fetch Cath Database
+  get_url:
+    url: http://bioinfadmin.cs.ucl.ac.uk/downloads/merizo_search/cath_foldclassdb.tar.gz
+    dest: /home/almalinux/data/cath-4.3-foldclassdb.tar.gz
+- name: Unarchive Cath Database
+  ansible.builtin.unarchive:
+    src: /home/almalinux/data/cath-4.3-foldclassdb.tar.gz
+    dest: /home/almalinux/data/
+    remote_src: yes
+- name: Remove Cath Database Archive
+  ansible.builtin.file:
+    path: /home/almalinux/data/cath-4.3-foldclassdb.tar.gz
+    state: absent
+- name: Fetch Human Proteome Dataset
+  ansible.builtin.get_url:
+    url: https://ftp.ebi.ac.uk/pub/databases/alphafold/latest/{{ item }}.tar
+    dest: /home/almalinux/data/{{ item }}.tar
+- name: Create directory for Human Proteome Dataset
+  ansible.builtin.file:
+    path: /home/almalinux/data/{{ item }}
+    state: directory
+- name: Unarchive Human Proteome Dataset
+  ansible.builtin.unarchive:
+    src: /home/almalinux/data/{{ item }}.tar
+    dest: /home/almalinux/data/{{ item }}
+    remote_src: yes
+- name: Remove Human Proteome Dataset Archive
+  ansible.builtin.file:
+    path: /home/almalinux/data/{{ item }}.tar
+    state: absent
+- name: Check if Human dataset directory exists in HDFS
+  command: hdfs dfs -test -d /{{ item }}/
+  register: hdfs_dir_check
+  ignore_errors: true
+- name: Upload local directory to HDFS
+  command: hdfs dfs -put -f /home/almalinux/data/{{ item }} /
+  when: hdfs_dir_check.rc != 0
+  register: upload_result
+- name: Verify upload
+  debug:
+    msg: "Directory uploaded to HDFS successfully."
+  when: upload_result is changed
+
+
+

@@ -1,0 +1,18 @@
+- name: Create empty data directory
+  file:
+    path: /home/almalinux/data
+    state: directory
+- name: Fetch Cath Database
+  get_url:
+    url: http://bioinfadmin.cs.ucl.ac.uk/downloads/merizo_search/cath_foldclassdb.tar.gz
+    dest: /home/almalinux/data/cath-4.3-foldclassdb.tar.gz
+- name: Unarchive Cath Database
+  ansible.builtin.unarchive:
+    src: /home/almalinux/data/cath-4.3-foldclassdb.tar.gz
+    dest: /home/almalinux/data/
+    remote_src: yes
+- name: Remove Cath Database Archive
+  ansible.builtin.file:
+    path: /home/almalinux/data/cath-4.3-foldclassdb.tar.gz
+    state: absent
+

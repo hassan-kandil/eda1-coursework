@@ -1,0 +1,9 @@
+- name: Clone merizo search git repo
+  ansible.builtin.git:
+    repo: "https://github.com/psipred/merizo_search.git"
+    dest: "/home/almalinux/merizo_search"
+- name: Install required python dependencies
+  ansible.builtin.pip:
+    requirements: /home/almalinux/merizo_pipeline/requirements.txt
+    executable: pip3 
+

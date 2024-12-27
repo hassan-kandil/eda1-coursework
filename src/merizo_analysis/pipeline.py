@@ -43,7 +43,7 @@ def run_parser(input_file):
     """
     search_file = input_file+"_search.tsv"
     print("search_file: ", search_file)
-    cmd = ['python3', '/home/almalinux/eda1-coursework/src/merizo_pipeline/results_parser.py', search_file]
+    cmd = ['python3', '/home/almalinux/merizo_pipeline/merizo_analysis/results_parser.py', search_file]
     print(f'STEP 2: RUNNING PARSER: {" ".join(cmd)}')
     p = Popen(cmd, stdin=PIPE,stdout=PIPE, stderr=PIPE)
     out, err = p.communicate()

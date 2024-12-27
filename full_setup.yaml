@@ -1,4 +1,32 @@
-- import_playbook: setup_basic.yaml
-- import_playbook: setup_ssh.yaml
-- import_playbook: setup_hadoop.yaml
-- import_playbook: setup_spark.yaml
+- name: VMs basic tools and packages setup
+  hosts: all
+  become: true
+  become_user: root
+  roles:
+    - setup_basic
+
+- name: Generate shared SSH keys
+  hosts: hostnode
+  roles:
+    - generate_ssh_key
+
+- name: Share SSH keys
+  hosts: hostnode:workers
+  roles:
+    - share_ssh_key
+
+- name: Install and configure Hadoop
+  hosts: all
+  roles:
+    - hadoop
+
+- name: Install and configure spark
+  hosts: all
+  roles:
+    - spark
+
+- name: Pipeline setup
+  hosts: all
+  roles:
+    - pipeline
+

@@ -1,0 +1,6 @@
+datasets:
+  - "UP000005640_9606_HUMAN_v4"
+  - "UP000000625_83333_ECOLI_v4"
+output_directories:
+  - "/analaysis_outputs/"
+  - "/summary_outputs/"

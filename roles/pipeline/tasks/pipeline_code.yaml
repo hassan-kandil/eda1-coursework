@@ -1,0 +1,7 @@
+- name: Copy pipeline code to cluster
+  ansible.builtin.copy:
+    src: "{{ playbook_dir }}/src/"
+    dest: /home/almalinux/merizo_pipeline/
+    owner: almalinux
+    group: almalinux
+    mode: '0755'

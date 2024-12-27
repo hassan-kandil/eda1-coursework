@@ -1,0 +1,97 @@
+- name: Download Dataset
+  ansible.builtin.get_url:
+    url: https://ftp.ebi.ac.uk/pub/databases/alphafold/latest/{{ item }}.tar
+    dest: /home/almalinux/data/{{ item }}.tar
+- name: Create directory for Dataset
+  ansible.builtin.file:
+    path: /home/almalinux/data/{{ item }}
+    state: directory
+- name: Unarchive Dataset
+  ansible.builtin.unarchive:
+    src: /home/almalinux/data/{{ item }}.tar
+    dest: /home/almalinux/data/{{ item }}
+    remote_src: yes
+- name: Remove Dataset Archive
+  ansible.builtin.file:
+    path: /home/almalinux/data/{{ item }}.tar
+    state: absent
+- name: Remove .cif.gz files
+  ansible.builtin.shell: "find /home/almalinux/data/{{ item }} -name '*.cif.gz' -type f -delete"
+  register: deletion_result
+  changed_when: deletion_result.rc == 0
+- name: Decompress each .pdb.gz file if the corresponding .pdb file doesn't exist
+  ansible.builtin.shell: |
+    for file in *.pdb.gz; do
+      target_file="/home/almalinux/data/{{ item }}/$(basename "$file" .gz)"
+      if [ ! -f "$target_file" ]; then
+        gunzip -c "$file" > "$target_file"
+      fi
+    done
+  args:
+    chdir: /home/almalinux/data/{{ item }}
+- name: Remove .gz files
+  ansible.builtin.shell: "find /home/almalinux/data/{{ item }} -name '*.gz' -type f -delete"
+  register: deletion_result
+  changed_when: deletion_result.rc == 0
+- name: Check if dataset directory exists in HDFS
+  command: hadoop fs -test -d /{{ item }}/
+  register: hdfs_dir_check
+  ignore_errors: true
+- name: Create empty dataset directory in HDFS if it does not exist
+  command: hdfs dfs -mkdir -p /{{ item }}/
+  when: hdfs_dir_check.rc != 0
+- name: Upload local directory to HDFS
+  command: hdfs dfs -put -f /home/almalinux/data/{{ item }} /
+  register: upload_result
+- name: Verify upload
+  debug:
+    msg: "Directory uploaded to HDFS successfully."
+  when: upload_result is changed
+- name: Remove dataset local directory
+  ansible.builtin.file:
+    path: /home/almalinux/data/{{ item }}
+    state: absent
+# - name: Get list of files in the local directory
+#   find:
+#     path: /home/almalinux/data/{{ item }}
+#     file_type: file
+#   register: file_list
+# - name: Upload files to HDFS and delete them from local directory
+#   ansible.builtin.shell: |
+#     for file in *.pdb; do
+#       # Check if file already exists in HDFS
+#       if ! hdfs dfs -test -e /{{ item }}/$(basename $file); then
+#         # Upload the file to HDFS
+#         hdfs dfs -put -f $file /{{ item }}/ && \
+#         echo "Uploaded $file to HDFS."
+
+#         # If upload was successful, delete the local file
+#         if [ $? -eq 0 ]; then
+#           rm -f $file && echo "Deleted local file $file."
+#         fi
+#       else
+#         echo "$file already exists in HDFS, skipping upload."
+#       fi
+#     done
+#   args:
+#     chdir: /home/almalinux/data/{{ item }}
+# - name: Upload files to HDFS one by one
+#   block:
+#     - name: Upload file to HDFS
+#       command: hdfs dfs -put -f /home/almalinux/data/{{ item }}/{{ file.path | basename }} /{{ item }}/
+#       register: upload_result
+#       changed_when: upload_result.rc == 0
+#       with_items: "{{ file_list.files }}"
+#       loop_control:
+#         loop_var: file
+
+#     - name: Delete local file after upload
+#       ansible.builtin.file:
+#         path: "{{ file.path }}"
+#         state: absent
+#       when: upload_result is changed
+#       with_items: "{{ file_list.files }}"
+#       loop_control:
+#         loop_var: file
+
+

@@ -1,0 +1,14 @@
+- name: Install pipeline
+  hosts: all
+  tasks:
+    - name: Copy pipeline code to cluster
+    ansible.builtin.copy:
+      src: "{{ playbook_dir }}/src/"
+      dest: /home/almalinux/merizo_pipeline/
+      owner: almalinux
+      group: almalinux
+      mode: '0755'
+
+    - name: Install pipeline code package
+      ansible.builtin.pip:
+        name: /home/almalinux/merizo_pipeline/

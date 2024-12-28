@@ -9,3 +9,4 @@
 - name: Install pipeline code package
   ansible.builtin.pip:
     name: /home/almalinux/merizo_pipeline/
+  become: yes

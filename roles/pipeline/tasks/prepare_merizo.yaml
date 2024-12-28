@@ -5,5 +5,4 @@
 - name: Install required python dependencies
   ansible.builtin.pip:
     requirements: /home/almalinux/merizo_pipeline/requirements.txt
-    executable: pip3 
-
+  become: yes

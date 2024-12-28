@@ -79,8 +79,16 @@
           <value>4</value>
       </property>
       <property>
+          <name>yarn.scheduler.minimum-allocation-vcores</name>
+          <value>2</value>
+      </property>
+      <property>
           <name>yarn.nodemanager.resource.memory-mb</name>
-          <value>28672</value>
+          <value>29013</value>
+      </property>
+      <property>
+          <name>yarn.scheduler.maximum-allocation-mb</name>
+          <value>13824</value>
       </property>
     state: present
 - name: config mapred-site.xml
@@ -98,3 +106,16 @@
           <value>yarn</value>
       </property>
     state: present
+- name: Install lxml package dependencies
+  package:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - python3-lxml
+  become: yes
+- name: config capacity-scheduler.xml
+  community.general.xml:
+    path: /home/almalinux/hadoop-3.4.0/etc/hadoop/capacity-scheduler.xml
+    xpath: '/configuration/property[name="yarn.scheduler.capacity.resource-calculator"]/value'
+    value: org.apache.hadoop.yarn.util.resource.DominantResourceCalculator
+

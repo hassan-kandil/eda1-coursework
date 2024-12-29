@@ -17,7 +17,7 @@ def write_df_to_hdfs_csv(df, hdfs_path, csv_file_name):
     print(f'WRITING ANALYSIS SUMMARY OUTPUT {csv_file_name} TO HDFS...')
     write_path = hdfs_path + csv_file_name
     df.write.option("header","true").mode("overwrite").csv(write_path)
-    hdfs_mv_cmd = ['hdfs', 'dfs', '-mv', write_path + '/part-00000-*.csv', write_path + '.csv']
+    hdfs_mv_cmd = ['/home/almalinux/hadoop-3.4.0/bin/hdfs', 'dfs', '-mv', write_path + '/part-00000-*.csv', write_path + '.csv']
     p = Popen(hdfs_mv_cmd, stdin=PIPE,stdout=PIPE, stderr=PIPE)
     out, err = p.communicate()
     # Decode the byte output to string

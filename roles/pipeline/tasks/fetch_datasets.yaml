@@ -1,3 +1,7 @@
+- name: Create empty data directory
+  file:
+    path: /home/almalinux/data
+    state: directory
 - name: Download Dataset
   ansible.builtin.get_url:
     url: https://ftp.ebi.ac.uk/pub/databases/alphafold/latest/{{ item }}.tar
@@ -29,7 +33,7 @@
     done
   args:
     chdir: /home/almalinux/data/{{ item }}
-- name: Remove .gz files
+- name: Remove pdb.gz files
   ansible.builtin.shell: "find /home/almalinux/data/{{ item }} -name '*.gz' -type f -delete"
   register: deletion_result
   changed_when: deletion_result.rc == 0

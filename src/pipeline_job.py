@@ -92,7 +92,7 @@ if __name__ == "__main__":
         start_time = time.time()
         logger.info("Running pipeline job..")
         ecoli_stats, ecoli_cath_count = run_full_pipeline(spark, "ecoli", ecoli_dir)
-        # human_stats, human_cath_count = run_full_pipeline(spark, "human", human_dir)
+        human_stats, human_cath_count = run_full_pipeline(spark, "human", human_dir)
         logger.info(f"Pipeline job finished in {time.time() - start_time:.2f} seconds.")
     except Exception as e:
         logger.exception(f"Error running pipeline: {e}")

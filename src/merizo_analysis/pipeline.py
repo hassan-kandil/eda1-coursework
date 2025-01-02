@@ -1,62 +1,41 @@
-from subprocess import Popen, PIPE
+from subprocess import CalledProcessError, Popen, PIPE
 from tempfile import NamedTemporaryFile
 
 import os
 
-def delete_local_file(file_path):
-    try:
-        os.remove(file_path)
-        print(f"{file_path} local file has been deleted.")
-    except FileNotFoundError:
-        print(f"{file_path} does not exist.")
-    except PermissionError:
-        print(f"Permission denied to delete {file_path}.")
-    except Exception as e:
-        print(f"An error occurred: {e}")
-
+from merizo_analysis.utils import delete_local_file, run_command
+from merizo_analysis.config import logger
 
 def upload_file_to_hdfs(local_file_path, hdfs_file_path):
     hdfs_put_cmd = ['/home/almalinux/hadoop-3.4.0/bin/hdfs', 'dfs', '-put', local_file_path, hdfs_file_path]
-    print(f'STEP 3: UPLOADING ANALYSIS OUTPUT TO HDFS: {" ".join(hdfs_put_cmd)}')
-    p = Popen(hdfs_put_cmd, stdin=PIPE,stdout=PIPE, stderr=PIPE)
-    out, err = p.communicate()
-    # Decode the byte output to string
-    print("Output:")
-    print(out.decode("utf-8"))  # Decode and print the standard output
-    
-    if err:
-        print("Error:")
-        print(err.decode("utf-8"))  # Decode and print the standard  
-
+    logger.info(f'STEP 3: UPLOADING ANALYSIS OUTPUT TO HDFS: {" ".join(hdfs_put_cmd)}')
+    run_command(hdfs_put_cmd)
 
 def upload_analysis_outputs_to_hdfs(file_name):
     # upload anaylsis output files to hdfs and clean local files
     local_files_paths = [ file_name + '_segment.tsv', file_name + '_search.tsv', file_name + '.parsed']
     hdfs_file_path = '/analysis_outputs/'
     for local_file_path in local_files_paths:
+        if not os.path.exists(local_file_path):
+            logger.info(f"File {local_file_path} does not exist. Skipping the upload to hdfs.")
+            continue
         upload_file_to_hdfs(local_file_path, hdfs_file_path)
         delete_local_file(local_file_path)
 
 def run_parser(input_file):
     """
-    Run the results_parser.py over the hhr file to produce the output summary
+    Run the results_parser.py over the tsv search file to produce the output summary
     """
     search_file = input_file+"_search.tsv"
-    print("search_file: ", search_file)
+    if not os.path.exists(search_file):
+        logger.info(f"Search file {search_file} does not exist. Skipping the parser.")
+        return
     cmd = ['python3', '/home/almalinux/merizo_pipeline/merizo_analysis/results_parser.py', search_file]
-    print(f'STEP 2: RUNNING PARSER: {" ".join(cmd)}')
-    p = Popen(cmd, stdin=PIPE,stdout=PIPE, stderr=PIPE)
-    out, err = p.communicate()
-    # Decode the byte output to string
-    print("Output:")
-    print(out.decode("utf-8"))  # Decode and print the standard output
-        
-    if err:
-        print("Error:")
-        print(err.decode("utf-8"))  # Decode and print the standard error
+    logger.info(f'STEP 2: RUNNING PARSER: {" ".join(cmd)}')
+    run_command(cmd)
 
 def run_merizo_search(file_name, file_content):
-    print(f"File Name: {file_name}")
+    logger.info(f"File Name: {file_name}")
     # Setting matplotlib config env var to a writable tmp directory 
     # since it's a merizo search dependency
     os.environ['MPLCONFIGDIR'] = '/tmp/matplotlib_config'
@@ -79,16 +58,12 @@ def run_merizo_search(file_name, file_content):
            '--threads',
            '2'
         ]
-        print(f'STEP 1: RUNNING MERIZO: {" ".join(cmd)}')
+        logger.info(f'STEP 1: RUNNING MERIZO: {" ".join(cmd)}')
         p = Popen(cmd, stdin=PIPE,stdout=PIPE, stderr=PIPE)
-        out, err = p.communicate()
-        # Decode the byte output to string
-        print("Output:")
-        print(out.decode("utf-8"))  # Decode and print the standard output
-        
-        if err:
-            print("Error:")
-            print(err.decode("utf-8"))  # Decode and print the standard 
+        _, err = p.communicate()
+        logger.info(f"Command {''.join(cmd)} Output: \n{err.decode('utf-8')}") # Using stderr since merizo writes everything to stderr
+        if p.returncode != 0:
+            logger.error(f"Command {''.join(cmd)} Error: \n{err.decode('utf-8')}")
 
 
 def read_parsed_file(file_name):

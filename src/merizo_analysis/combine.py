@@ -1,6 +1,5 @@
 import math
 from collections import Counter
-import time
 
 # Define the zero value for the accumulator: (float_sum, float_sum_of_squares, float_count, combined_dict)
 zero_value = (0.0, 0.0, 0, {})
@@ -31,9 +30,9 @@ def comb_op(accum1, accum2):
 
 def extract_results(result):
     float_sum, float_sum_of_squares, float_count, combined_dict = result
-    mean = float_sum / float_count
+    mean = float_sum / float_count if float_count > 0 else 0.0
 
-    population_variance = (float_sum_of_squares - (float_sum ** 2) / float_count) / float_count
+    population_variance = (float_sum_of_squares - (float_sum ** 2) / float_count) / float_count if float_count > 0 else 0.0
     population_std_dev = math.sqrt(population_variance)
 
     return mean, population_std_dev, combined_dict

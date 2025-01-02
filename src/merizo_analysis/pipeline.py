@@ -103,14 +103,13 @@ def read_parsed_file(file_name):
     Returns:
         tuple: (dict of cath_id counts, mean pLDDT value)
     """
-    cath_counts = {}
-    mean_plddt = 0
-
     file_path = file_name + '.parsed'
-
     if not os.path.exists(file_path):
-        return mean_plddt, cath_counts
+        return None, None # Skipping unsegmentable pdb files
     
+    cath_counts = {}
+    mean_plddt = 0.0
+
     with open(file_path, 'r') as file:
         lines = file.readlines()
         

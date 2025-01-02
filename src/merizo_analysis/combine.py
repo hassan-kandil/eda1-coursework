@@ -9,6 +9,8 @@ zero_value = (0.0, 0.0, 0, {})
 def seq_op(accum, value):
     float_sum, float_sum_of_squares, float_count, combined_dict = accum
     new_float, new_dict = value
+    if new_float is None and new_dict is None:
+        return accum
     return (
         float_sum + new_float,
         float_sum_of_squares + new_float ** 2,

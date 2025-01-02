@@ -9,3 +9,7 @@
   ansible.builtin.shell: |
     nohup /home/almalinux/hadoop-3.4.0/sbin/stop-all.sh
     nohup /home/almalinux/hadoop-3.4.0/sbin/start-all.sh
+- name: restart httpfs
+  ansible.builtin.shell: |
+    nohup hdfs --daemon stop httpfs
+    nohup hdfs --daemon start httpfs

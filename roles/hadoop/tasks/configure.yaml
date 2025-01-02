@@ -26,6 +26,14 @@
           <name>fs.default.FS</name>
           <value>hdfs://hostnode:9000/</value>
       </property>
+      <property>
+          <name>hadoop.proxyuser.almalinux.hosts</name>
+          <value>*</value>
+      </property>
+      <property>
+          <name>hadoop.proxyuser.almalinux.groups</name>
+          <value>*</value>
+      </property>
     state: present
 - name: config hdfs-site.xml
   ansible.builtin.blockinfile:
@@ -106,6 +114,28 @@
           <value>yarn</value>
       </property>
     state: present
+- name: httpfs-site.xml
+  ansible.builtin.blockinfile:
+    path: /home/almalinux/hadoop-3.4.0/etc/hadoop/httpfs-site.xml
+    insertafter: <configuration>
+    marker: "<!-- {mark} ANSIBLE MANAGED BLOCK -->"
+    block: |
+      <property>
+        <name>httpfs.permissions.enabled</name>
+        <value>true</value>
+      </property>
+      <property>
+        <name>httpfs.hadoop.authentication.type</name>
+        <value>simple</value>
+      </property>
+      <property>
+          <name>httpfs.hadoop.proxyuser.publicuser.groups</name>
+          <value>*</value>
+      </property>
+      <property>
+          <name>httpfs.hadoop.proxyuser.publicuser.hosts</name>
+          <value>*</value>
+      </property>
 - name: Install lxml package dependencies
   package:
     name: "{{ item }}"
@@ -114,7 +144,7 @@
     - python3-lxml
   become: yes
 - name: config capacity-scheduler.xml
-  community.general.xml:
+  xml:
     path: /home/almalinux/hadoop-3.4.0/etc/hadoop/capacity-scheduler.xml
     xpath: '/configuration/property[name="yarn.scheduler.capacity.resource-calculator"]/value'
     value: org.apache.hadoop.yarn.util.resource.DominantResourceCalculator

@@ -11,3 +11,6 @@
   when: '"workers" in group_names'
 - include_tasks: fetch_cath.yaml
   when: '"workers" in group_names'
+- include_tasks: run.yaml
+  when: "'hostnode' in group_names"
+

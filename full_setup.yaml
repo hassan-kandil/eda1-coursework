@@ -20,6 +20,11 @@
   roles:
     - hadoop
 
+- name: Install and configure Nginx
+  hosts: hostnode
+  roles:
+    - nginx
+
 - name: Install and configure spark
   hosts: all
   roles:
@@ -29,4 +34,5 @@
   hosts: all
   roles:
     - pipeline
+
 

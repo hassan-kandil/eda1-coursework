@@ -73,6 +73,14 @@ resource "harvester_virtualmachine" "hostvm" {
     condenser_ingress_hadoop_port = 9870
     condenser_ingress_yarn_hostname = "${var.username}-yarn"
     condenser_ingress_yarn_port = 8088
+    condenser_ingress_prometheus_hostname = "${var.username}-prometheus"
+    condenser_ingress_prometheus_port = 9090
+    condenser_ingress_grafana_hostname = "${var.username}-grafana"
+    condenser_ingress_grafana_port = 3000
+    condenser_ingress_node_exporter_hostname = "${var.username}-node-exporter"
+    condenser_ingress_node_exporter_port = 9100
+    condenser_ingress_ngnix_hostname = "${var.username}-nginx"
+    condenser_ingress_ngnix_port = 80
   }
   
   cloudinit {
@@ -117,6 +125,13 @@ resource "harvester_virtualmachine" "workervm" {
 
     image       = data.harvester_image.img.id
     auto_delete = true
+  }
+
+  tags = {
+    condenser_ingress_isEnabled = true
+    condenser_ingress_isAllowed = true
+    condenser_ingress_node_hostname = "${var.username}-node-${format("%02d", count.index + 1)}"
+    condenser_ingress_node_port = 9100
   }
 
   cloudinit {

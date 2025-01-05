@@ -88,7 +88,7 @@
       </property>
       <property>
           <name>yarn.scheduler.minimum-allocation-vcores</name>
-          <value>2</value>
+          <value>1</value>
       </property>
       <property>
           <name>yarn.nodemanager.resource.memory-mb</name>
@@ -97,6 +97,10 @@
       <property>
           <name>yarn.scheduler.maximum-allocation-mb</name>
           <value>7253</value>
+      </property>
+      <property>
+          <name>yarn.app.mapreduce.am.resource.memory-mb</name>
+          <value>4096</value>
       </property>
     state: present
 - name: config mapred-site.xml

@@ -32,7 +32,7 @@
   roles:
     - spark
 
-- name: Pipeline setup
+- name: Setup and run merizo analysis pipeline
   hosts: all
   roles:
     - pipeline

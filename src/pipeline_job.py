@@ -112,9 +112,16 @@ if __name__ == "__main__":
 
     try:
         start_time = time.time()
-        logger.info("Running pipeline job..")
+        logger.info("Running pipeline job for ecoli dataset..")
         ecoli_mean, ecoli_std_dev = run_full_pipeline(spark, "ecoli", ecoli_dir)
+        logger.info(
+            f"Pipeline job for ecoli dataset finished in {time.time() - start_time:.2f} seconds."
+        )
+        start_time = time.time()
         human_mean, human_std_dev = run_full_pipeline(spark, "human", human_dir)
+        logger.info(
+            f"Pipeline job for human dataset finished in {time.time() - start_time:.2f} seconds."
+        )
         stats_df = spark.createDataFrame(
             [
                 ("human", human_mean, human_std_dev),
@@ -131,7 +138,6 @@ if __name__ == "__main__":
         write_df_to_hdfs_csv(stats_df, "/summary_outputs/", "pIDDT_means")
         compress_hdfs_output_dir("/summary_outputs/")
         compress_hdfs_output_dir("/analysis_outputs/")
-        logger.info(f"Pipeline job finished in {time.time() - start_time:.2f} seconds.")
     except Exception as e:
         logger.exception(f"Error running pipeline: {e}")
         raise e

@@ -92,15 +92,11 @@
       </property>
       <property>
           <name>yarn.nodemanager.resource.memory-mb</name>
-          <value>29013</value>
+          <value>28672</value>
       </property>
       <property>
           <name>yarn.scheduler.maximum-allocation-mb</name>
-          <value>7253</value>
-      </property>
-      <property>
-          <name>yarn.app.mapreduce.am.resource.memory-mb</name>
-          <value>4096</value>
+          <value>9216</value>
       </property>
     state: present
 - name: config mapred-site.xml

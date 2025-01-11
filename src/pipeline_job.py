@@ -75,17 +75,18 @@ def create_df_from_dict(cath_count_dict):
     return cath_count_df
 
 
-def prepare_rdd(sc, input_dir):
+def prepare_rdd(sc, input_dir, min_partitions=18):
     # Failed example : AF-P0DSE5-F1-model_v4.pdb
     # Success example: AF-P75975-F1-model_v4.pdb with empty parsed file
     # Success example: AF-P67430-F1-model_v4.pdb with non-empty parsed file
     logger.info(f"Reading files from {input_dir}")
+
     # files = ["AF-P0DSE5-F1-model_v4.pdb", "AF-P75975-F1-model_v4.pdb", "AF-P67430-F1-model_v4.pdb"]
     # file_paths = []
     # for file in files:
     #     file_path = input_dir + file
     #     file_paths.append(file_path)
-    file_rdd = sc.binaryFiles(input_dir + "*.pdb")
+    file_rdd = sc.binaryFiles(input_dir + "*.pdb", minPartitions=min_partitions)
     # file_rdd = sc.binaryFiles(','.join(file_paths))
     # file_rdd = file_rdd.sample(withReplacement=False, fraction=0.001)
     file_content_rdd = file_rdd.map(lambda x: (os.path.basename(x[0]), x[1]))
@@ -94,9 +95,9 @@ def prepare_rdd(sc, input_dir):
     return file_content_rdd
 
 
-def run_full_pipeline(spark, dataset_name, input_dir):
+def run_full_pipeline(spark, dataset_name, input_dir, min_partitions=18):
     sc = spark.sparkContext
-    content_rdd = prepare_rdd(sc, input_dir)
+    content_rdd = prepare_rdd(sc, input_dir, min_partitions)
     result = content_rdd.map(pipeline).aggregate(zero_value, seq_op, comb_op)
     mean, population_std_dev, combined_dict = extract_results(result)
 
@@ -122,6 +123,7 @@ if __name__ == "__main__":
         "ecoli": "/UP000000625_83333_ECOLI_v4/",
         "human": "/UP000005640_9606_HUMAN_v4/",
     }
+    MIN_PARTITIONS = {"ecoli": 18, "human": 36}
 
     dataset_names = [name.strip().lower() for name in args.datasets]
 
@@ -139,7 +141,10 @@ if __name__ == "__main__":
             start_time = time.time()
             logger.info(f"Running pipeline job for {dataset_name} dataset..")
             mean, std_dev = run_full_pipeline(
-                spark, dataset_name, DATASET_DIRS[dataset_name]
+                spark,
+                dataset_name,
+                DATASET_DIRS[dataset_name],
+                MIN_PARTITIONS[dataset_name],
             )
             summary_stats.append((dataset_name, mean, std_dev))
             logger.info(

@@ -86,7 +86,7 @@ def prepare_rdd(sc, input_dir, min_partitions=18):
     # for file in files:
     #     file_path = input_dir + file
     #     file_paths.append(file_path)
-    file_rdd = sc.binaryFiles(input_dir + "*.pdb", minPartitions=min_partitions)
+    file_rdd = sc.wholeTextFiles(input_dir + "*.pdb", minPartitions=min_partitions)
     # file_rdd = sc.binaryFiles(','.join(file_paths))
     # file_rdd = file_rdd.sample(withReplacement=False, fraction=0.001)
     file_content_rdd = file_rdd.map(lambda x: (os.path.basename(x[0]), x[1]))

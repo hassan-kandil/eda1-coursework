@@ -32,6 +32,27 @@
   roles:
     - spark
 
+- name: Set up Prometheus
+  hosts: hostnode
+  become: true
+  become_user: root
+  roles:
+    - prometheus
+
+- name: Set up node exporter 
+  hosts: workers
+  become: true
+  become_user: root
+  roles:
+    - node_exporter
+
+- name: Set up Grafana
+  hosts: hostnode
+  become: true
+  become_user: root
+  roles:
+    - grafana
+
 - name: Setup and run merizo analysis pipeline
   hosts: all
   roles:

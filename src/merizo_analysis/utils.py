@@ -7,13 +7,13 @@ from merizo_analysis.config import logger
 
 def run_command(cmd: str):
     command_string = " ".join(cmd)
-    p = Popen(cmd, stdin=PIPE,stdout=PIPE, stderr=PIPE)
+    p = Popen(cmd, stdin=PIPE, stdout=PIPE, stderr=PIPE)
     out, err = p.communicate()
     # Decode the byte output to string
-    logger.info(f"Command {command_string} Output: \n{out.decode('utf-8')}")
+    logger.info(f"Command {command_string} Output: {out.decode('utf-8')}")
 
     if err:
-        logger.error(f"Command {command_string} Error: \n{err.decode('utf-8')}")
+        logger.error(f"Command {command_string} Error: {err.decode('utf-8')}")
 
 
 def compress_directory(directory_path, tar_gz_path):
@@ -22,6 +22,7 @@ def compress_directory(directory_path, tar_gz_path):
     with tarfile.open(tar_gz_path, "w:gz") as tar:
         tar.add(directory_path, arcname=".")
     logger.info(f"Directory {directory_path} compressed into {tar_gz_path}")
+
 
 def delete_local_directory(directory_path):
     try:
@@ -36,6 +37,7 @@ def delete_local_directory(directory_path):
     except Exception as e:
         logger.error(f"An error occurred: {e}")
         raise
+
 
 def delete_local_file(file_path):
     try:

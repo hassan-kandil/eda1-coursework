@@ -130,8 +130,10 @@ resource "harvester_virtualmachine" "workervm" {
   tags = {
     condenser_ingress_isEnabled = true
     condenser_ingress_isAllowed = true
-    condenser_ingress_node_hostname = "${var.username}-node-${format("%02d", count.index + 1)}"
+    condenser_ingress_node_hostname = "${var.username}-node${format("%d", count.index + 1)}"
     condenser_ingress_node_port = 9100
+    condenser_ingress_yarn_hostname = "${var.username}-yarn-worker${format("%d", count.index + 1)}"
+    condenser_ingress_yarn_port = 8042
   }
 
   cloudinit {

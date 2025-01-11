@@ -7,12 +7,12 @@ from merizo_analysis.utils import delete_local_file, run_command
 from merizo_analysis.config import logger
 
 
-def upload_file_to_hdfs(local_file_path, hdfs_file_path):
+def upload_files_to_hdfs(local_files_paths, hdfs_file_path):
     hdfs_put_cmd = [
         "/home/almalinux/hadoop-3.4.0/bin/hdfs",
         "dfs",
         "-put",
-        local_file_path,
+        *local_files_paths,
         hdfs_file_path,
     ]
     logger.info(f'STEP 3: UPLOADING ANALYSIS OUTPUT TO HDFS: {" ".join(hdfs_put_cmd)}')
@@ -30,7 +30,7 @@ def upload_analysis_outputs_to_hdfs(file_name):
     files_to_upload = [
         local_file for local_file in local_files_paths if os.path.exists(local_file)
     ]
-    upload_file_to_hdfs(" ".join(files_to_upload), hdfs_file_path)
+    upload_files_to_hdfs(files_to_upload, hdfs_file_path)
     for uploaded_file in files_to_upload:
         delete_local_file(uploaded_file)
 
@@ -59,7 +59,7 @@ def run_merizo_search(file_name, file_content):
     os.environ["MPLCONFIGDIR"] = "/tmp/matplotlib_config"
     # Create a temporary file to hold the pdb content
     # since merizo search requires the input to be a physical file
-    with NamedTemporaryFile(delete=True, mode="wb") as temp_file:
+    with NamedTemporaryFile(delete=True, mode="w") as temp_file:
         temp_file.write(file_content)
         temp_file_path = temp_file.name
         cmd = [

@@ -27,14 +27,12 @@ def upload_analysis_outputs_to_hdfs(file_name):
         file_name + ".parsed",
     ]
     hdfs_file_path = "/analysis_outputs/"
-    for local_file_path in local_files_paths:
-        if not os.path.exists(local_file_path):
-            logger.info(
-                f"File {local_file_path} does not exist. Skipping the upload to hdfs."
-            )
-            continue
-        upload_file_to_hdfs(local_file_path, hdfs_file_path)
-        delete_local_file(local_file_path)
+    files_to_upload = [
+        local_file for local_file in local_files_paths if os.path.exists(local_file)
+    ]
+    upload_file_to_hdfs(" ".join(files_to_upload), hdfs_file_path)
+    for uploaded_file in files_to_upload:
+        delete_local_file(uploaded_file)
 
 
 def run_parser(input_file):

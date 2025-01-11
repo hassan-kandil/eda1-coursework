@@ -1,3 +1,4 @@
+import argparse
 from pyspark.sql import SparkSession
 import os
 import time
@@ -88,6 +89,8 @@ def prepare_rdd(sc, input_dir):
     # file_rdd = sc.binaryFiles(','.join(file_paths))
     # file_rdd = file_rdd.sample(withReplacement=False, fraction=0.001)
     file_content_rdd = file_rdd.map(lambda x: (os.path.basename(x[0]), x[1]))
+    logger.info(f"Number of files read: {file_content_rdd.count()}")
+    logger.info(f"RDD Number of partitions: {file_content_rdd.getNumPartitions()}")
     return file_content_rdd
 
 
@@ -105,28 +108,45 @@ def run_full_pipeline(spark, dataset_name, input_dir):
 
 
 if __name__ == "__main__":
+    # Parse CLI arguments
+    parser = argparse.ArgumentParser(
+        description="Run the pipeline for the specified datasets."
+    )
+    parser.add_argument(
+        "datasets", nargs="+", help="List of dataset names (e.g., ecoli human)."
+    )
+    args = parser.parse_args()
+
+    # Define dataset directories
+    DATASET_DIRS = {
+        "ecoli": "/UP000000625_83333_ECOLI_v4/",
+        "human": "/UP000005640_9606_HUMAN_v4/",
+    }
+
+    dataset_names = [name.strip().lower() for name in args.datasets]
+
+    invalid_datasets = [name for name in dataset_names if name not in DATASET_DIRS]
+    if invalid_datasets:
+        raise ValueError(
+            f"Invalid dataset name(s): {', '.join(invalid_datasets)}. Choose from {list(DATASET_DIRS.keys())}."
+        )
+
     spark = SparkSession.builder.appName("MerizoPipeline").getOrCreate()
 
-    ecoli_dir = "/UP000000625_83333_ECOLI_v4/"
-    human_dir = "/UP000005640_9606_HUMAN_v4/"
-
     try:
-        start_time = time.time()
-        logger.info("Running pipeline job for ecoli dataset..")
-        ecoli_mean, ecoli_std_dev = run_full_pipeline(spark, "ecoli", ecoli_dir)
-        logger.info(
-            f"Pipeline job for ecoli dataset finished in {time.time() - start_time:.2f} seconds."
-        )
-        start_time = time.time()
-        human_mean, human_std_dev = run_full_pipeline(spark, "human", human_dir)
-        logger.info(
-            f"Pipeline job for human dataset finished in {time.time() - start_time:.2f} seconds."
-        )
+        summary_stats = []
+        for dataset_name in dataset_names:
+            start_time = time.time()
+            logger.info(f"Running pipeline job for {dataset_name} dataset..")
+            mean, std_dev = run_full_pipeline(
+                spark, dataset_name, DATASET_DIRS[dataset_name]
+            )
+            summary_stats.append((dataset_name, mean, std_dev))
+            logger.info(
+                f"Pipeline job for {dataset_name} dataset finished in {time.time() - start_time:.2f} seconds."
+            )
         stats_df = spark.createDataFrame(
-            [
-                ("human", human_mean, human_std_dev),
-                ("ecoli", ecoli_mean, ecoli_std_dev),
-            ],
+            summary_stats,
             schema=StructType(
                 [
                     StructField("organism", StringType(), True),
@@ -135,7 +155,7 @@ if __name__ == "__main__":
                 ]
             ),
         ).coalesce(1)
-        write_df_to_hdfs_csv(stats_df, "/summary_outputs/", "pIDDT_means")
+        write_df_to_hdfs_csv(stats_df, "/summary_outputs/", "plDDT_means")
         compress_hdfs_output_dir("/summary_outputs/")
         compress_hdfs_output_dir("/analysis_outputs/")
     except Exception as e:

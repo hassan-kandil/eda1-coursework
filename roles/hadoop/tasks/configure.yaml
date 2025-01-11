@@ -92,7 +92,7 @@
       </property>
       <property>
           <name>yarn.nodemanager.resource.memory-mb</name>
-          <value>28672</value>
+          <value>29696</value>
       </property>
       <property>
           <name>yarn.scheduler.maximum-allocation-mb</name>

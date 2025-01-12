@@ -30,6 +30,8 @@ def upload_analysis_outputs_to_hdfs(file_name):
     files_to_upload = [
         local_file for local_file in local_files_paths if os.path.exists(local_file)
     ]
+    if not files_to_upload:
+        return
     upload_files_to_hdfs(files_to_upload, hdfs_file_path)
     for uploaded_file in files_to_upload:
         delete_local_file(uploaded_file)
@@ -81,10 +83,10 @@ def run_merizo_search(file_name, file_content):
         p = Popen(cmd, stdin=PIPE, stdout=PIPE, stderr=PIPE)
         _, err = p.communicate()
         logger.info(
-            f"Command {''.join(cmd)} Output: \n{err.decode('utf-8')}"
+            f"Command {' '.join(cmd)} Output: \n{err.decode('utf-8')}"
         )  # Using stderr since merizo writes everything to stderr
         if p.returncode != 0:
-            logger.error(f"Command {''.join(cmd)} Error: \n{err.decode('utf-8')}")
+            logger.error(f"Command {' '.join(cmd)} Error: \n{err.decode('utf-8')}")
 
 
 def read_parsed_file(file_name):

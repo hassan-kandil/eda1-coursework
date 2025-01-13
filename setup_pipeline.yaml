@@ -1,4 +1,0 @@
-- name: Set up the pipeline
-  hosts: all
-  roles:
-    - pipeline

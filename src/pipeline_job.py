@@ -76,19 +76,8 @@ def create_df_from_dict(cath_count_dict):
 
 
 def prepare_rdd(sc, input_dir, min_partitions=18):
-    # Failed example : AF-P0DSE5-F1-model_v4.pdb
-    # Success example: AF-P75975-F1-model_v4.pdb with empty parsed file
-    # Success example: AF-P67430-F1-model_v4.pdb with non-empty parsed file
     logger.info(f"Reading files from {input_dir}")
-
-    # files = ["AF-P0DSE5-F1-model_v4.pdb", "AF-P75975-F1-model_v4.pdb", "AF-P67430-F1-model_v4.pdb"]
-    # file_paths = []
-    # for file in files:
-    #     file_path = input_dir + file
-    #     file_paths.append(file_path)
     file_rdd = sc.wholeTextFiles(input_dir + "*.pdb", minPartitions=min_partitions)
-    # file_rdd = sc.binaryFiles(','.join(file_paths))
-    # file_rdd = file_rdd.sample(withReplacement=False, fraction=0.001)
     file_content_rdd = file_rdd.map(lambda x: (os.path.basename(x[0]), x[1]))
     logger.info(f"Number of files read: {file_content_rdd.count()}")
     logger.info(f"RDD Number of partitions: {file_content_rdd.getNumPartitions()}")

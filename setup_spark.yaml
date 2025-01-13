@@ -1,4 +1,0 @@
-- name: Install and configure spark
-  hosts: all
-  roles:
-    - spark

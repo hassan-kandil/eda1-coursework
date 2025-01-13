@@ -1,6 +1,0 @@
-- name: VMs basic tools and packages setup
-  hosts: all
-  become: true
-  become_user: root
-  roles:
-    - setup_basic

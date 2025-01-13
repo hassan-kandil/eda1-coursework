@@ -1,4 +1,0 @@
-- name: Install and configure Hadoop
-  hosts: all
-  roles:
-    - hadoop

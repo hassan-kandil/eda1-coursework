@@ -123,7 +123,7 @@ if __name__ == "__main__":
         "ecoli": "/UP000000625_83333_ECOLI_v4/",
         "human": "/UP000005640_9606_HUMAN_v4/",
     }
-    MIN_PARTITIONS = {"ecoli": 18, "human": 36}
+    MIN_PARTITIONS = {"ecoli": 9, "human": 72}
 
     dataset_names = [name.strip().lower() for name in args.datasets]
 

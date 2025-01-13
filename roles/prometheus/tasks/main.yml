@@ -54,11 +54,6 @@
     src: prometheus.yml.j2
     dest: /etc/prometheus/prometheus.yml
 
-- name: alert config file
-  copy:
-    src: "{{ role_path }}/files/alertrules.yml"
-    dest: /etc/prometheus/alert.rules.yml
-
 - name: Copy systemd init file
   template:
     src: init.service.j2

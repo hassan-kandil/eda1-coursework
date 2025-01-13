@@ -14,13 +14,3 @@ scrape_configs:
         - '{{ host }}:9100'
       {% endfor %}
 
-rule_files:
-  - alert.rules.yml
-
-alerting:
-  alertmanagers:
-  - static_configs:
-    - targets:
-    {% for host in groups['workers'] %}
-      - '{{ host }}:9093'
-    {% endfor %}

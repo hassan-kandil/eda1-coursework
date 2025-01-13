@@ -59,7 +59,11 @@ Use the following steps to run the Merizo analysis pipeline on an existing clust
 2. **(Optional)** Clean up previous outputs stored on HDFS in the following directories:
    - `/analysis_outputs/`
    - `/summary_outputs/`
-3. Submit the Spark job:
+3. Navigate to /home/almalinux/merizo_pipeline directory
+   ```bash
+   cd /home/almalinux/merizo_pipeline
+   ```
+4. Submit the Spark job:
    ```bash
    spark-submit --deploy-mode cluster --master yarn pipeline_job.py ecoli human
    ```

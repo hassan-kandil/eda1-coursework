@@ -5,6 +5,7 @@ This repository contains code for setting up and using a cluster to run the Meri
 ---
 
 ## Table of Contents
+
 - [EDA1 Coursework](#eda1-coursework)
   - [Table of Contents](#table-of-contents)
   - [Provisioning a New Cluster](#provisioning-a-new-cluster)
